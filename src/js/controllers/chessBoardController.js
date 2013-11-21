@@ -12,7 +12,7 @@
 			if($scope.selectedCell){
 				if(chessBoardService.movePiece($scope.selectedCell, cell)){
 				}
-					$scope.selectedCell = null;
+				$scope.selectedCell = null;
 				
 			}
 			else{

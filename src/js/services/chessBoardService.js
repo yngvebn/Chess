@@ -50,15 +50,100 @@
 			},
 			knight: {
 				white: {letter: 'h', startpositions: [{ col: 1, row: 0},{ col: 6, row: 0} ] },
-				black: {letter: 'j', startpositions: [{ col: 1, row: 7},{ col: 6, row: 7} ] }	
+				black: {letter: 'j', startpositions: [{ col: 1, row: 7},{ col: 6, row: 7} ] },
+				canSkipPieces: true,
+				allowedMoves:[
+					{ col: 1, row: 2 },
+					{ col: -1, row: 2 },
+					{ col: 1, row: -2 },
+					{ col: -1, row: -2 },
+					{ col: 2, row: 1 },
+					{ col: -2, row: 1 },
+					{ col: 2, row: -1 },
+					{ col: -2, row: -1 },
+				]
 			},
 			king: {
 				white: {letter: 'k', startpositions: [ { col: 4, row: 0} ] },
-				black: {letter: 'l', startpositions: [ { col: 4, row: 7} ] }	
+				black: {letter: 'l', startpositions: [ { col: 4, row: 7} ] },
+				allowedMoves:[
+					{ col: 1, row: 1 },
+					{ col: -1, row: 1 },
+					{ col: 1, row: -1 },
+					{ col: -1, row: -1 },
+					{ col: 0, row: -1 },
+					{ col: 0, row: 1 },
+					{ col: 1, row: 0 },
+					{ col: -1, row: 0 },
+				]
 			},
 			queen: {
 				white: {letter: 'q', startpositions: [{ col: 3, row: 0} ] },
-				black: {letter: 'w', startpositions: [{ col: 3, row: 7} ] }	
+				black: {letter: 'w', startpositions: [{ col: 3, row: 7} ] },
+				allowedMoves:[
+					{ col: 0, row: 1},
+					{ col: 0, row: 2},
+					{ col: 0, row: 3},
+					{ col: 0, row: 4},
+					{ col: 0, row: 5},
+					{ col: 0, row: 6},
+					{ col: 0, row: 7},
+					{ col: 0, row: 8},
+					{ col: 1, row: 0},
+					{ col: 2, row: 0},
+					{ col: 3, row: 0},
+					{ col: 4, row: 0},
+					{ col: 5, row: 0},
+					{ col: 6, row: 0},
+					{ col: 7, row: 0},
+					{ col: 0, row: -1},
+					{ col: 0, row: -2},
+					{ col: 0, row: -3},
+					{ col: 0, row: -4},
+					{ col: 0, row: -5},
+					{ col: 0, row: -6},
+					{ col: 0, row: -7},
+					{ col: 0, row: 8},
+					{ col: -1, row: 0},
+					{ col: -2, row: 0},
+					{ col: -3, row: 0},
+					{ col: -4, row: 0},
+					{ col: -5, row: 0},
+					{ col: -6, row: 0},
+					{ col: -7, row: 0},
+					{ col: 1, row: 1 },
+					{ col: 2, row: 2 },
+					{ col: 3, row: 3 },
+					{ col: 4, row: 4 },
+					{ col: 5, row: 5 },
+					{ col: 6, row: 6 },
+					{ col: 7, row: 7 },
+					{ col: 8, row: 8 },
+					{ col: 1, row: -1 },
+					{ col: 2, row: -2 },
+					{ col: 3, row: -3 },
+					{ col: 4, row: -4 },
+					{ col: 5, row: -5 },
+					{ col: 6, row: -6 },
+					{ col: 7, row: -7 },
+					{ col: 8, row: -8 },
+					{ col: -1, row: 1 },
+					{ col: -2, row: 2 },
+					{ col: -3, row: 3 },
+					{ col: -4, row: 4 },
+					{ col: -5, row: 5 },
+					{ col: -6, row: 6 },
+					{ col: -7, row: 7 },
+					{ col: -8, row: 8 },
+					{ col: -1, row: -1 },
+					{ col: -2, row: -2 },
+					{ col: -3, row: -3 },
+					{ col: -4, row: -4 },
+					{ col: -5, row: -5 },
+					{ col: -6, row: -6 },
+					{ col: -7, row: -7 },
+					{ col: -8, row: -8 }
+				]
 			},
 			bishop: {
 				white: {letter: 'b', startpositions: [{ col: 2, row: 0},{ col: 5, row: 0}  ] },
@@ -101,7 +186,39 @@
 			},
 			tower: {
 				white: { letter: 'r', startpositions: [{ col: 0, row: 0},{ col: 7, row: 0}  ]},
-				black: { letter: 't', startpositions: [{ col: 0, row: 7} ,{ col: 7, row: 7} ]}	
+				black: { letter: 't', startpositions: [{ col: 0, row: 7} ,{ col: 7, row: 7} ]},
+				allowedMoves:[
+					{ col: 0, row: 1},
+					{ col: 0, row: 2},
+					{ col: 0, row: 3},
+					{ col: 0, row: 4},
+					{ col: 0, row: 5},
+					{ col: 0, row: 6},
+					{ col: 0, row: 7},
+					{ col: 0, row: 8},
+					{ col: 1, row: 0},
+					{ col: 2, row: 0},
+					{ col: 3, row: 0},
+					{ col: 4, row: 0},
+					{ col: 5, row: 0},
+					{ col: 6, row: 0},
+					{ col: 7, row: 0},
+					{ col: 0, row: -1},
+					{ col: 0, row: -2},
+					{ col: 0, row: -3},
+					{ col: 0, row: -4},
+					{ col: 0, row: -5},
+					{ col: 0, row: -6},
+					{ col: 0, row: -7},
+					{ col: 0, row: 8},
+					{ col: -1, row: 0},
+					{ col: -2, row: 0},
+					{ col: -3, row: 0},
+					{ col: -4, row: 0},
+					{ col: -5, row: 0},
+					{ col: -6, row: 0},
+					{ col: -7, row: 0}
+				]
 			}
 
 		}
@@ -111,12 +228,38 @@
 		resetBoard();
 		setUpStartPositions()
 
-		var getIntermediateCells = function(source, destination){
-			
+		var getIntermediateCells = function(s, d){
+			var source = {
+				col: s.col,
+				row: s.row
+			};
+			var destination = {
+				col: d.col,
+				row: d.row
+			};
+			var path = [];
+			var current = source;
+			while(JSON.stringify(destination) != JSON.stringify(current)){
+				var row = destination.row == source.row ? source.row : 
+					(destination.row > source.row ? current.row+1 : current.row-1);
+				var col = destination.col == source.col ? source.col : (destination.col > source.col ? current.col+1 : current.col-1);
+				var cell = {
+					col: col,
+					row: row
+				};
+				if(JSON.stringify(destination) != JSON.stringify(cell) && JSON.stringify(source) != JSON.stringify(cell))
+					path.push(cell);
+				current = cell;
+			}
+			return path;
 		}
-		
+
 		var pieceInPath = function(source, destination){
 			var positionsInPath = getIntermediateCells(source, destination);
+			for (var i = positionsInPath.length - 1; i >= 0; i--) {
+				var pos = positionsInPath[i]
+				if(service.board[pos.row].cells[pos.col].piece) return true;
+			};
 		}
 
 		var isAllowedMove = function(source, destination){
@@ -128,8 +271,8 @@
 				col: destination.col - source.col,
 				row: destination.row - source.row
 			};
-			if(!piece.canSkipPieces && pieceInPath(source, destination)){
-				return false;
+			if(!piece.canSkipPieces){
+				if(pieceInPath(source, destination)) return false;
 			}
 			for(var allowedMove in piece.allowedMoves){
 				var move = piece.allowedMoves[allowedMove]
@@ -141,10 +284,10 @@
 					isMoveAllowed = true;
 					if(move.firstTimeOnly){
 						isMoveAllowed =  (move.firstTimeOnly && isFirstTimeMove);
-					}
+					} else
 					if(move.onlyIfOccupied){
 						isMoveAllowed = (move.onlyIfOccupied && destination.piece);
-					}
+					} else
 					if(move.onlyIfAvailable){
 						isMoveAllowed = !destination.piece;
 					}
