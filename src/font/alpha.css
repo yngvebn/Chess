@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'ChessAlphaRegular';
+    src: url('alpha.eot');
+    src: url('alpha.eot') format('embedded-opentype'),
+         url('alpha.woff') format('woff'),
+         url('alpha.ttf') format('truetype'),
+         url('alpha.svg#ChessAlphaRegular') format('svg');
+}
