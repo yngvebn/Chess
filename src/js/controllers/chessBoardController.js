@@ -6,15 +6,18 @@
 	function ChessBoardController($scope, chessBoardService){
 		$scope.board = chessBoardService.board;
 
-		$scope.selectedCell = {};
+		$scope.selectedCell = null;
 
 		$scope.select = function(cell){
-			if($scope.selectedCell && !cell.piece){
-				chessBoardService.movePiece($scope.selectedCell, cell);
-				$scope.selectedCell = null;
+			if($scope.selectedCell){
+				if(chessBoardService.movePiece($scope.selectedCell, cell)){
+				}
+					$scope.selectedCell = null;
+				
 			}
 			else{
-			$scope.selectedCell = cell;
+				if(cell.piece)
+					$scope.selectedCell = cell;
 			}
 		}
 	}

@@ -33,7 +33,20 @@
 					{ col: 5, row: 6},
 					{ col: 6, row: 6},
 					{ col: 7, row: 6}
-				] }
+				] }, allowedMoves: [
+					{
+						col: 0, row: 1, onlyIfAvailable: true
+					},
+					{
+						col: 0, row: 2, firstTimeOnly: true, onlyIfAvailable: true
+					},
+					{
+						col: 1, row: 1, onlyIfOccupied: true
+					},
+					{
+						col: -1, row: 1, onlyIfOccupied: true
+					}
+				]
 			},
 			knight: {
 				white: {letter: 'h', startpositions: [{ col: 1, row: 0},{ col: 6, row: 0} ] },
@@ -49,7 +62,42 @@
 			},
 			bishop: {
 				white: {letter: 'b', startpositions: [{ col: 2, row: 0},{ col: 5, row: 0}  ] },
-				black: {letter: 'n', startpositions: [{ col: 2, row: 7},{ col: 5, row: 7}  ] }	
+				black: {letter: 'n', startpositions: [{ col: 2, row: 7},{ col: 5, row: 7}  ] },
+				allowedMoves:[
+				
+					{ col: 1, row: 1 },
+					{ col: 2, row: 2 },
+					{ col: 3, row: 3 },
+					{ col: 4, row: 4 },
+					{ col: 5, row: 5 },
+					{ col: 6, row: 6 },
+					{ col: 7, row: 7 },
+					{ col: 8, row: 8 },
+					{ col: 1, row: -1 },
+					{ col: 2, row: -2 },
+					{ col: 3, row: -3 },
+					{ col: 4, row: -4 },
+					{ col: 5, row: -5 },
+					{ col: 6, row: -6 },
+					{ col: 7, row: -7 },
+					{ col: 8, row: -8 },
+					{ col: -1, row: 1 },
+					{ col: -2, row: 2 },
+					{ col: -3, row: 3 },
+					{ col: -4, row: 4 },
+					{ col: -5, row: 5 },
+					{ col: -6, row: 6 },
+					{ col: -7, row: 7 },
+					{ col: -8, row: 8 },
+					{ col: -1, row: -1 },
+					{ col: -2, row: -2 },
+					{ col: -3, row: -3 },
+					{ col: -4, row: -4 },
+					{ col: -5, row: -5 },
+					{ col: -6, row: -6 },
+					{ col: -7, row: -7 },
+					{ col: -8, row: -8 }
+				]
 			},
 			tower: {
 				white: { letter: 'r', startpositions: [{ col: 0, row: 0},{ col: 7, row: 0}  ]},
@@ -62,14 +110,71 @@
 
 		resetBoard();
 		setUpStartPositions()
+
+		var getIntermediateCells = function(source, destination){
+			
+		}
+		
+		var pieceInPath = function(source, destination){
+			var positionsInPath = getIntermediateCells(source, destination);
+		}
+
+		var isAllowedMove = function(source, destination){
+			var piece = pieces[source.piece.name];
+			var direction = source.piece.color == 'white' ? 1 : -1; 
+			var isFirstTimeMove = !source.piece.history;
+			var isMoveAllowed = false;
+			var offset = {
+				col: destination.col - source.col,
+				row: destination.row - source.row
+			};
+			if(!piece.canSkipPieces && pieceInPath(source, destination)){
+				return false;
+			}
+			for(var allowedMove in piece.allowedMoves){
+				var move = piece.allowedMoves[allowedMove]
+				var moveOffset = {
+					col: move.col,
+					row: move.row * direction
+				};
+				if(JSON.stringify(moveOffset) === JSON.stringify(offset)){
+					isMoveAllowed = true;
+					if(move.firstTimeOnly){
+						isMoveAllowed =  (move.firstTimeOnly && isFirstTimeMove);
+					}
+					if(move.onlyIfOccupied){
+						isMoveAllowed = (move.onlyIfOccupied && destination.piece);
+					}
+					if(move.onlyIfAvailable){
+						isMoveAllowed = !destination.piece;
+					}
+				}
+			}
+			if(!isMoveAllowed) return false;
+			if(destination.piece)
+			{
+				if(source.piece.color === destination.piece.color) return false;
+			}
+			return true;
+		}
+
 		return service;
 
 		function movePiece(sourceCell, destinationCell){
-			console.log('moving piece', sourceCell, destinationCell);
-			var sourcePiece = service.board[sourceCell.row].cells[sourceCell.col].piece;
-			service.board[destinationCell.row].cells[destinationCell.col].piece = sourcePiece;
+			var source = service.board[sourceCell.row].cells[sourceCell.col];
+			var destination = service.board[destinationCell.row].cells[destinationCell.col];
+			if(!isAllowedMove(source, destination)) return false;
+			
+			var piece = source.piece;
+			piece.history = piece.history || [];
+			piece.history.push({
+				source: sourceCell, destination: destinationCell
+			});
+			destination.piece = piece;
 
-			service.board[sourceCell.row].cells[sourceCell.col].piece = null;
+			source.piece = null;
+
+			return true;
 		}
 
 		function setUpStartPositions(){
@@ -80,6 +185,7 @@
 				for(var pos in whiteStartPositions){
 					var position = whiteStartPositions[pos];
 					service.board[position.row].cells[position.col].piece = {
+						color: 'white',
 						letter: piece.white.letter,
 						name: p
 					}
@@ -87,6 +193,7 @@
 				for(var pos in blackStartPositions){
 					var position = blackStartPositions[pos];
 					service.board[position.row].cells[position.col].piece = {
+						color: 'black',
 						letter: piece.black.letter,
 						name: p
 					}
