@@ -271,9 +271,7 @@
 				col: destination.col - source.col,
 				row: destination.row - source.row
 			};
-			if(!piece.canSkipPieces){
-				if(pieceInPath(source, destination)) return false;
-			}
+
 			for(var allowedMove in piece.allowedMoves){
 				var move = piece.allowedMoves[allowedMove]
 				var moveOffset = {
@@ -294,6 +292,9 @@
 				}
 			}
 			if(!isMoveAllowed) return false;
+			if(!piece.canSkipPieces){
+				if(pieceInPath(source, destination)) return false;
+			}
 			if(destination.piece)
 			{
 				if(source.piece.color === destination.piece.color) return false;

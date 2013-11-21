@@ -11,8 +11,11 @@
 		$scope.select = function(cell){
 			if($scope.selectedCell){
 				if(chessBoardService.movePiece($scope.selectedCell, cell)){
+					$scope.selectedCell = null;
 				}
-				$scope.selectedCell = null;
+				else
+				if(cell.piece)
+					$scope.selectedCell = cell;
 				
 			}
 			else{
