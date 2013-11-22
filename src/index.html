@@ -57,6 +57,9 @@
 	td.selected{
 		outline: #ABB7C0 solid 2px;
 	}
+	td.canMove{
+		outline: lime solid 3px;
+	}
 	td:hover{
 		background-color:#D8B78D !important;
 	}
@@ -64,12 +67,12 @@
 </head>
 <body ng-app="chess">
 	<div ng-controller="chessBoardController" class="chessboard-container">
-	<table class="chessboard">
+	<table style="float:left;" class="chessboard">
 	<thead><tr><th>&nbsp;</th></tr></thead>
 	<tbody>
 	<tr ng-repeat="row in board">
 	<th>{{row.index+1}}</td>
-		<td ng-repeat="cell in row.cells" ng-click="select(cell)" ng-class="{ selected: selectedCell == cell }">
+		<td ng-repeat="cell in row.cells" ng-click="select(cell)" ng-class="{ selected: selectedCell == cell, canMove: canMove(cell) }">
 			<span class="piece">{{cell.piece.letter}}</span>
 		</td>
 		<th></th>
@@ -91,7 +94,13 @@
 	</tfoot>
 	</table>
 
-	
+	<div style="float:left; background-color: #aaa;">
+		<ul >
+			<li ng-repeat="possibleMove in selectedCell.piece.possibleMoves">
+				{{possibleMove.letter}}-{{possibleMove.row+1}}	
+			</li>
+		</ul>
+	</div>
 	</div>
 	<script type="text/javascript" src="js/vendor/underscore.js"></script>
  	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.js"></script>

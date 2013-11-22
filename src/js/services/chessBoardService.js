@@ -6,14 +6,12 @@
 		var service = {
 			board: [],
 			pieces: [],
-			movePiece: movePiece
+			movePiece: movePiece,
+			isCheckMate: isCheckMate
 
 		};
 	
-		resetBoard();
-		setUpStartPositions()
-
-		var getIntermediateCells = function(s, d){
+		var getPath = function(s, d){
 			var source = {
 				col: s.col,
 				row: s.row
@@ -40,7 +38,7 @@
 		}
 
 		var pieceInPath = function(source, destination){
-			var positionsInPath = getIntermediateCells(source, destination);
+			var positionsInPath = getPath(source, destination);
 			for (var i = positionsInPath.length - 1; i >= 0; i--) {
 				var pos = positionsInPath[i]
 				if(service.board[pos.row].cells[pos.col].piece) return true;
@@ -79,20 +77,32 @@
 
 		var willCauseSelfCheck = function(source, destination)
 		{
-			var piece = pieces[destination.piece.name];
-			var kingPosition = findKingPosition(destination.piece.color);
+			var pieceCurrentlyInDestination = destination.piece;
+			var pieceCurrentlyInSource = source.piece;
+
+			destination.piece = source.piece;
+			source.piece = null;
+			
+			var sourcePiece = pieceCurrentlyInSource;
+			var piece = pieces[sourcePiece.name];
+
+			var kingPosition = findKingPosition(sourcePiece.color);
 			
 			var opposingColor = piece.color == 'white' ? 'black' : 'white';
-
+			var wouldCauseCheck = false;
 			var opposingPiecePositions = getAllPiecePositions(opposingColor);
 			for (var i = opposingPiecePositions.length - 1; i >= 0; i--) {
 				if(isAllowedMove(opposingPiecePositions[i], kingPosition)) {
 					console.log("Move would cause self check", source, destination);
-					return true;
+					wouldCauseCheck = true;
 				}
 			};
 
+			destination.piece = pieceCurrentlyInDestination;
+			source.piece = pieceCurrentlyInSource;
+			return wouldCauseCheck;
 		}
+
 		var isAllowedMove = function(source, destination){
 
 			var piece = pieces[source.piece.name];
@@ -115,11 +125,11 @@
 				if(JSON.stringify(moveOffset) === JSON.stringify(offset)){
 					isMoveAllowed = true;
 					if(move.firstTimeOnly){
-						isMoveAllowed =  (move.firstTimeOnly && isFirstTimeMove);
-					} else
+						if(!isFirstTimeMove) return false;
+					}
 					if(move.onlyIfOccupied){
 						isMoveAllowed = (move.onlyIfOccupied && destination.piece);
-					} else
+					} 
 					if(move.onlyIfAvailable){
 						isMoveAllowed = !destination.piece;
 					}
@@ -136,7 +146,61 @@
 			return true;
 		}
 
+		function getCell(row, col){
+			return service.board[row].cells[col];
+		}
+		function recalculateAvailableMoves(){
+			var blackPieces = getAllPiecePositions('black');
+			var whitePieces = getAllPiecePositions('white');
+
+			for (var i = blackPieces.length - 1; i >= 0; i--) {
+				var source = blackPieces[i];
+				source.piece.possibleMoves = [];
+
+				for(var row = 0; row < 8; row++){
+					for(var col = 0; col < 8; col++){
+						var destination = getCell(row, col);
+
+						if(isAllowedMove(source, destination)  && !willCauseSelfCheck(source, destination)){
+							source.piece.possibleMoves.push(destination);
+						}
+					};
+				}
+			}
+			for (var i = whitePieces.length - 1; i >= 0; i--) {
+				var source = whitePieces[i];
+				source.piece.possibleMoves = [];
+
+				for(var row = 0; row < 8; row++){
+					for(var col = 0; col < 8; col++){
+						var destination = getCell(row, col);
+
+						if(isAllowedMove(source, destination) && !willCauseSelfCheck(source, destination)){
+							source.piece.possibleMoves.push(destination);
+						}
+					};
+				}
+			}
+
+		}
+
+		resetBoard();
+		setUpStartPositions();
+		recalculateAvailableMoves();
+	
+
 		return service;
+		function isCheckMate(destinationCell){
+			var destination = service.board[destinationCell.row].cells[destinationCell.col];
+			var colorOfMovedPiece = destination.piece.color;
+			var opposingColor = colorOfMovedPiece == 'white' ? 'black' : 'white';
+
+			var pieces = getAllPiecePositions(opposingColor);
+			for (var i = pieces.length - 1; i >= 0; i--) {
+				if(pieces[i].piece.possibleMoves.length > 0) return false;
+			};
+			return true;
+		}
 
 		function movePiece(sourceCell, destinationCell){
 			var source = service.board[sourceCell.row].cells[sourceCell.col];
@@ -148,16 +212,15 @@
 			piece.history.push({
 				source: sourceCell, destination: destinationCell
 			});
+			if(willCauseSelfCheck(source, destination)){
+				return false;
+			}
+			
 			destination.piece = piece;
 
 			source.piece = null;
 			
-			if(willCauseSelfCheck(source, destination)){
-				source.piece = destination.piece;
-				destination.piece = null;
-				return false;
-			}
-			
+			recalculateAvailableMoves();
 			return true;
 		}
 
@@ -206,6 +269,7 @@
 				board.push(row);
 			};
 			service.board = board;
+
 		}
 	}
 

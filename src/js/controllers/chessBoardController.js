@@ -8,10 +8,23 @@
 
 		$scope.selectedCell = null;
 
+		$scope.canMove = function(cell){
+			if(!$scope.selectedCell) return false;
+			for (var i = $scope.selectedCell.piece.possibleMoves.length - 1; i >= 0; i--) {
+				var possibleMove = $scope.selectedCell.piece.possibleMoves[i];
+				if(cell.col == possibleMove.col && cell.row == possibleMove.row) return true;
+
+			};
+			return false;
+		}
+
 		$scope.select = function(cell){
 			if($scope.selectedCell){
 				if(chessBoardService.movePiece($scope.selectedCell, cell)){
 					$scope.selectedCell = null;
+					if(chessBoardService.isCheckMate(cell)){
+						alert('Check mate!');
+					}
 				}
 				else
 				if(cell.piece)
