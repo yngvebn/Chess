@@ -81,13 +81,7 @@
 		{
 			var piece = pieces[destination.piece.name];
 			var kingPosition = findKingPosition(destination.piece.color);
-			/*if(source.piece.name == 'king')
-			{	
-				kingPosition = {
-					col: destination.col,
-					row: destination.row
-				}
-			}*/
+			
 			var opposingColor = piece.color == 'white' ? 'black' : 'white';
 
 			var opposingPiecePositions = getAllPiecePositions(opposingColor);
