@@ -47,10 +47,65 @@
 			};
 		}
 
+		var findKingPosition = function(color){
+			for (var row = service.board.length - 1; row >= 0; row--) {
+				for (var col = service.board[row].cells.length - 1; col >= 0; col--) {
+					var piece = service.board[row].cells[col].piece;
+					if(piece){
+						if(piece.color == color && piece.name == 'king')
+							return service.board[row].cells[col];
+					}
+				};
+				
+			};
+		}
+
+		var getAllPiecePositions = function(color){
+			var pieces = [];
+			for (var row = service.board.length - 1; row >= 0; row--) {
+				for (var col = service.board[row].cells.length - 1; col >= 0; col--) {
+					var piece = service.board[row].cells[col].piece;
+					if(piece){
+						if(piece.color == color)
+						{
+							pieces.push(service.board[row].cells[col]);
+						}
+					}
+				};
+				
+			};
+			return pieces;
+		}
+
+		var willCauseSelfCheck = function(source, destination)
+		{
+			var piece = pieces[destination.piece.name];
+			var kingPosition = findKingPosition(destination.piece.color);
+			/*if(source.piece.name == 'king')
+			{	
+				kingPosition = {
+					col: destination.col,
+					row: destination.row
+				}
+			}*/
+			var opposingColor = piece.color == 'white' ? 'black' : 'white';
+
+			var opposingPiecePositions = getAllPiecePositions(opposingColor);
+			for (var i = opposingPiecePositions.length - 1; i >= 0; i--) {
+				if(isAllowedMove(opposingPiecePositions[i], kingPosition)) {
+					console.log("Move would cause self check", source, destination);
+					return true;
+				}
+			};
+
+		}
 		var isAllowedMove = function(source, destination){
+
 			var piece = pieces[source.piece.name];
 			var direction = source.piece.color == 'white' ? 1 : -1; 
 			var isFirstTimeMove = !source.piece.history;
+			
+			
 			var isMoveAllowed = false;
 			var offset = {
 				col: destination.col - source.col,
@@ -102,7 +157,13 @@
 			destination.piece = piece;
 
 			source.piece = null;
-
+			
+			if(willCauseSelfCheck(source, destination)){
+				source.piece = destination.piece;
+				destination.piece = null;
+				return false;
+			}
+			
 			return true;
 		}
 
@@ -116,7 +177,7 @@
 					service.board[position.row].cells[position.col].piece = {
 						color: 'white',
 						letter: piece.white.letter,
-						name: p
+						name: p,
 					}
 				}
 				for(var pos in blackStartPositions){
