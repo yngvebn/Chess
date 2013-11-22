@@ -58,7 +58,14 @@
 			};
 		}
 
-		var getAllPiecePositions = function(color){
+		var piecePositions = {};
+
+		var recalculatePiecePositions = function(color){
+			if(!color){
+				recalculatePiecePositions('black');
+				recalculatePiecePositions('white');
+				return;
+			}
 			var pieces = [];
 			for (var row = service.board.length - 1; row >= 0; row--) {
 				for (var col = service.board[row].cells.length - 1; col >= 0; col--) {
@@ -72,11 +79,17 @@
 				};
 				
 			};
-			return pieces;
+			piecePositions[color] = pieces;
+		}
+
+		var getAllPiecePositions = function(color){
+			
+			return piecePositions[color];
 		}
 
 		var willCauseSelfCheck = function(source, destination)
 		{
+		
 			var pieceCurrentlyInDestination = destination.piece;
 			var pieceCurrentlyInSource = source.piece;
 
@@ -88,18 +101,20 @@
 
 			var kingPosition = findKingPosition(sourcePiece.color);
 			
-			var opposingColor = piece.color == 'white' ? 'black' : 'white';
+			var opposingColor = sourcePiece.color == 'white' ? 'black' : 'white';
 			var wouldCauseCheck = false;
 			var opposingPiecePositions = getAllPiecePositions(opposingColor);
 			for (var i = opposingPiecePositions.length - 1; i >= 0; i--) {
 				if(isAllowedMove(opposingPiecePositions[i], kingPosition)) {
-					console.log("Move would cause self check", source, destination);
+					
 					wouldCauseCheck = true;
 				}
 			};
 
 			destination.piece = pieceCurrentlyInDestination;
 			source.piece = pieceCurrentlyInSource;
+
+			
 			return wouldCauseCheck;
 		}
 
@@ -150,11 +165,13 @@
 			return service.board[row].cells[col];
 		}
 		function recalculateAvailableMoves(){
+			var start = new Date().getTime();
+
 			var blackPieces = getAllPiecePositions('black');
 			var whitePieces = getAllPiecePositions('white');
-
-			for (var i = blackPieces.length - 1; i >= 0; i--) {
-				var source = blackPieces[i];
+			var allPieces = blackPieces.concat(whitePieces);
+			for (var i = allPieces.length - 1; i >= 0; i--) {
+				var source = allPieces[i];
 				source.piece.possibleMoves = [];
 
 				for(var row = 0; row < 8; row++){
@@ -167,28 +184,18 @@
 					};
 				}
 			}
-			for (var i = whitePieces.length - 1; i >= 0; i--) {
-				var source = whitePieces[i];
-				source.piece.possibleMoves = [];
+			
+			var end = new Date().getTime();
+			var time = end - start;
 
-				for(var row = 0; row < 8; row++){
-					for(var col = 0; col < 8; col++){
-						var destination = getCell(row, col);
-
-						if(isAllowedMove(source, destination) && !willCauseSelfCheck(source, destination)){
-							source.piece.possibleMoves.push(destination);
-						}
-					};
-				}
-			}
-
+			console.log('recalculateAvailableMoves ' + time);
 		}
 
 		resetBoard();
 		setUpStartPositions();
+		
+		recalculatePiecePositions();
 		recalculateAvailableMoves();
-	
-
 		return service;
 		function isCheckMate(destinationCell){
 			var destination = service.board[destinationCell.row].cells[destinationCell.col];
@@ -219,8 +226,14 @@
 			destination.piece = piece;
 
 			source.piece = null;
+
+			setTimeout(function(){
+				recalculatePiecePositions();
+				recalculateAvailableMoves();
+				}, 10);
 			
-			recalculateAvailableMoves();
+
+
 			return true;
 		}
 
@@ -246,6 +259,7 @@
 					}
 				}
 			}
+
 		}
 
 		function resetBoard(){
