@@ -70,8 +70,8 @@
 	<table style="float:left;" class="chessboard">
 	<thead><tr><th>&nbsp;</th></tr></thead>
 	<tbody>
-	<tr ng-repeat="row in board">
-	<th>{{row.index+1}}</td>
+	<tr ng-repeat="row in board.rows">
+	<th>{{$index+1}}</th>
 		<td ng-repeat="cell in row.cells" ng-click="select(cell)" ng-class="{ selected: selectedCell == cell, canMove: canMove(cell) }">
 			<span class="piece">{{cell.piece.letter}}</span>
 		</td>

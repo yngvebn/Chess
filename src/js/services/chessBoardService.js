@@ -1,16 +1,177 @@
+var Piece = function(piece, color, startPosition){
+    var position = {row: 0, col: 0}, history = [];
+    if(startPosition){
+        position.col = startPosition.col;
+        position.row = startPosition.row;
+    }
+
+	var options = {
+		piece: piece,
+		color: color
+	};
+
+    function calculateDifference(from, to){
+        return {
+            row: from.row - to.row,
+            col: from.col - to.col
+        }
+    }
+
+    function findAllowedMove(difference){
+        return _.find(options.piece.allowedMoves, function(move){
+            return move.col == difference.col && move.row == difference.row;
+        });
+    }
+
+    function isMoveAllowed(action, board, to){
+        if(action.onlyIfAvailable && board.hasPieceAtCoords(to)) return false;
+        if(action.onlyIfOccupied && !board.hasPieceAtCoords(to)) return false;
+        if(action.firstTimeOnly && history.length > 0) return false;
+        return true;
+    }
+
+	function move(board, to, callback){
+        var action = findAllowedMove(calculateDifference(this.position, to));
+        if(!action) return false;
+
+        if(!isMoveAllowed(action, board, to)) return false;
+
+        history.push({
+            piece: piece,
+            from: {
+                row: position.row,
+                col: position.col
+            },
+            to: {
+                row: to.row,
+                col: to.col
+            }
+        });
+        position.row = to.row;
+        position.col = to.col;
+        callback();
+        return true;
+	}
+
+	return {
+		move: move,
+        position: position,
+        history: history,
+        letter: piece.letter
+    }
+};
+
+var Board = function(){
+    var self = this, pieces = [], rows = [];
+    rows = getBlankBoard();
+
+
+    return {
+        findPieceByName: findPieceByName,
+        findPieceByCoords: findPieceByCoords,
+        hasPieceAtCoords: hasPieceAtCoords,
+        movePiece: movePiece,
+        rows: rows,
+        init: init,
+        load: load
+    }
+
+    function getBlankBoard(){
+        var newRows = [];
+        for(var row = 0; row<8; row++){
+            var thisRow = { cells : []};
+            for(var col = 0; col<8; col++){
+                thisRow.cells.push({
+                    piece: null,
+                    col: col,
+                    row: row
+                });
+            }
+            newRows.push(thisRow);
+        }
+
+        return newRows;
+    }
+
+
+    function findPieceByName(color, name){
+        return _.find(pieces, function(piece){
+            return piece.name === name && piece.color === color
+        });
+    }
+
+    function findPieceByCoords(coords){
+        var piece = _.find(pieces, function(piece){
+            return piece.position.row === coords.row && piece.position.col == coords.col;
+        });
+
+    return piece;
+    }
+
+    function hasPieceAtCoords(coords){
+        if(!findPieceByCoords(coords)) return false;
+        return true;
+    }
+
+    function movePiece(piece, to){
+        var oldPosition = {
+            col: piece.position.col,
+            row: piece.position.row
+        };
+        return piece.move(this, to, function(){
+            rows[oldPosition.row].cells[oldPosition.col].piece = null;
+            rows[to.row].cells[to.col].piece = piece;
+        });
+    }
+
+    function addPiece(piece){
+        pieces.push(piece);
+        rows[piece.position.row].cells[piece.position.col].piece = piece;
+    }
+
+
+    function init(pieces, callback){
+        for(var pieceDefinitionIndex in pieces){
+            var pieceDefinition = pieces[pieceDefinitionIndex];
+            var whitePiece = pieceDefinition['white'];
+            var blackPiece = pieceDefinition['black'];
+            for(var startPosition in whitePiece.startpositions){
+                var piece = new Piece({ letter: whitePiece.letter, allowedMoves: pieceDefinition.allowedMoves}, 'white', whitePiece.startpositions[startPosition]);
+                addPiece(piece);
+            }
+            for(var startPosition in blackPiece.startpositions){
+                var piece = new Piece({ letter: blackPiece.letter, allowedMoves: pieceDefinition.allowedMoves}, 'white', blackPiece.startpositions[startPosition]);
+                addPiece(piece);
+            }
+        }
+        callback(this);
+        return self;
+    }
+
+    function load(history){
+        return self;
+    }
+
+};
+
 (function(){
 	var serviceName = 'chessBoardService';
 	angular.module(Global.AppName).service(serviceName, ['pieces', ChessBoardService]);
 
 	function ChessBoardService(pieces){
 		var service = {
-			board: [],
+			board: {},
 			pieces: [],
 			movePiece: movePiece,
 			isCheckMate: isCheckMate
 
 		};
-	
+        new Board().init(pieces, function(board){
+            service.board = board;
+            console.log(board);
+        });
+        return service;
+
 		var getPath = function(s, d){
 			var source = {
 				col: s.col,
@@ -196,7 +357,7 @@
 		
 		recalculatePiecePositions();
 		recalculateAvailableMoves();
-		return service;
+
 		function isCheckMate(destinationCell){
 			var destination = service.board[destinationCell.row].cells[destinationCell.col];
 			var colorOfMovedPiece = destination.piece.color;
@@ -236,6 +397,8 @@
 
 			return true;
 		}
+
+		
 
 		function setUpStartPositions(){
 			for(var p in pieces){

@@ -25,17 +25,29 @@
 					{ col: 7, row: 6}
 				] }, allowedMoves: [
 					{
-						col: 0, row: 1, onlyIfAvailable: true
+						col: 0, row: 1, onlyIfAvailable: true, restrictDirection: true
 					},
 					{
-						col: 0, row: 2, firstTimeOnly: true, onlyIfAvailable: true
+						col: 0, row: 2, firstTimeOnly: true, onlyIfAvailable: true, restrictDirection: true
 					},
 					{
-						col: 1, row: 1, onlyIfOccupied: true
+						col: 1, row: 1, onlyIfOccupied: true, restrictDirection: true
 					},
 					{
-						col: -1, row: 1, onlyIfOccupied: true
-					}
+						col: -1, row: 1, onlyIfOccupied: true, restrictDirection: true
+					},
+                    {
+                        col: 0, row: -1, onlyIfAvailable: true, restrictDirection: true
+                    },
+                    {
+                        col: 0, row: -2, firstTimeOnly: true, onlyIfAvailable: true, restrictDirection: true
+                    },
+                    {
+                        col: 1, row: -1, onlyIfOccupied: true, restrictDirection: true
+                    },
+                    {
+                        col: -1, row: -1, onlyIfOccupied: true, restrictDirection: true
+                    }
 				]
 			},
 			knight: {
