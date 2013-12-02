@@ -25,29 +25,63 @@
 					{ col: 7, row: 6}
 				] }, allowedMoves: [
 					{
-						col: 0, row: 1, onlyIfAvailable: true, restrictDirection: true
+						col: 0, row: 1, onlyIfAvailable: true, restrictDirection: -1
 					},
 					{
-						col: 0, row: 2, firstTimeOnly: true, onlyIfAvailable: true, restrictDirection: true
+						col: 0, row: 2, firstTimeOnly: true, onlyIfAvailable: true, restrictDirection: -1
 					},
 					{
-						col: 1, row: 1, onlyIfOccupied: true, restrictDirection: true
+						col: 1, row: 1, onlyIfOccupied: true, restrictDirection: -1
 					},
 					{
-						col: -1, row: 1, onlyIfOccupied: true, restrictDirection: true
+						col: -1, row: 1, onlyIfOccupied: true, restrictDirection: -1
 					},
                     {
-                        col: 0, row: -1, onlyIfAvailable: true, restrictDirection: true
+                        col: 0, row: -1, onlyIfAvailable: true, restrictDirection: 1
                     },
                     {
-                        col: 0, row: -2, firstTimeOnly: true, onlyIfAvailable: true, restrictDirection: true
+                        col: 0, row: -2, firstTimeOnly: true, onlyIfAvailable: true, restrictDirection: 1
                     },
                     {
-                        col: 1, row: -1, onlyIfOccupied: true, restrictDirection: true
+                        col: 1, row: -1, onlyIfOccupied: true, restrictDirection: 1
                     },
                     {
-                        col: -1, row: -1, onlyIfOccupied: true, restrictDirection: true
+                        col: -1, row: -1, onlyIfOccupied: true, restrictDirection: 1
                     }
+				], specialMoves: [
+					{
+						name: 'EnPassent',
+						
+						onMove: function(board, to, piece){
+							board.takePieceAtCoords({
+								col: to.col,
+								row: to.row-piece.direction
+							})
+						},
+						getPossibleMoves: function(position, board){
+							var piece = board.findPieceByCoords(position);
+							function hasPassentPiece(position){
+								var lastMove = _.last(board.history);
+								if(!lastMove) return false;
+								if(lastMove.to.col == position.col && lastMove.to.row == position.row)
+								{
+									if(!lastMove.firstTimeOnly) return false;
+									if(lastMove.piece.name != 'rook') return false;
+
+									return true;
+								}
+								return false;
+							}
+							var possibleMoves = [];
+							if(!board.findPieceByCoords({ col: position.col -1, row: position.row + piece.direction }))
+								if(hasPassentPiece({ col: position.col -1, row: position.row})) possibleMoves.push({ col: position.col -1, row: position.row + piece.direction, onMove: this.onMove });
+							
+							if(!board.findPieceByCoords({ col: position.col +1, row: position.row + piece.direction }))	
+								if(hasPassentPiece({ col: position.col +1, row: position.row})) possibleMoves.push({ col: position.col +1, row: position.row + piece.direction, onMove: this.onMove });;
+
+							return possibleMoves;
+						}
+					}
 				]
 			},
 			knight: {

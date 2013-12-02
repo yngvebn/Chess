@@ -31,8 +31,12 @@
 		cursor:pointer;
 	}
 
-	.chessboard td .piece{
+	.piece{
 		font-family: 'ChessAlphaRegular'
+	}
+
+	.piece.small{
+		font-size: 1.2em;
 	}
 
 	.chessboard tr:nth-child(even) td:nth-child(even){
@@ -93,11 +97,26 @@
 	</tr>
 	</tfoot>
 	</table>
-
+	
 	<div style="float:left; background-color: #aaa;">
 		<ul >
 			<li ng-repeat="possibleMove in selectedCell.piece.possibleMoves">
 				{{possibleMove.letter}}-{{possibleMove.row+1}}	
+			</li>
+		</ul>
+	</div>
+
+	<div style="float:left; background-color: red">
+		<strong>White</strong>
+		<ul>
+			<li ng-repeat="piece in board.takenPieces | filter:'white' | orderBy:'letter'">
+				<span class="piece small">{{piece.letter}}</span>
+			</li>
+		</ul>
+		<strong>Black</strong>
+		<ul>
+			<li ng-repeat="piece in board.takenPieces | filter:'black' | orderBy:'letter'">
+				<span class="piece small">{{piece.letter}}</span>
 			</li>
 		</ul>
 	</div>
