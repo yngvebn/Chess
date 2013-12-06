@@ -111,6 +111,49 @@
 					{ col: 0, row: 1 },
 					{ col: 1, row: 0 },
 					{ col: -1, row: 0 },
+				], specialMoves: [
+					{
+						name: 'Castling',
+						
+						onMove: function(board, to, piece){
+							var row = to.row;
+							var tower = {};
+							if(to.col == 2){
+								tower = board.findPieceByCoords({ row: row, col: 0});
+							}
+							else{
+								tower = board.findPieceByCoords({ row: row, col: 7});	
+							}
+							var forceMovePosition = { row: row, col: (tower.position.col == 0 ? 3 : 5) };
+							board.movePiece(tower, forceMovePosition, true);
+						},
+						getPossibleMoves: function(position, board){
+							var piece = board.findPieceByCoords(position);
+							var possibleMoves = [];
+							if(piece.history.length > 0) return possibleMoves;
+
+							// find tower
+							var row = piece.position.row;
+							var towers = [ board.findPieceByCoords({ col: 0, row: row }), board.findPieceByCoords({ col: 7, row: row}) ];
+							for (var i = towers.length - 1; i >= 0; i--) {
+								var tower = towers[i];
+								if(tower && tower.history.length == 0){
+									if(tower.position.col == 0){
+										possibleMoves.push({ col: 2, row: row, onMove: this.onMove});
+									}
+									else{
+										possibleMoves.push({ col: 6, row: row, onMove: this.onMove});
+									}
+								}
+							};
+
+							// if tower has history, return empty
+
+
+
+							return possibleMoves;
+						}
+					}
 				]
 			},
 			queen: {

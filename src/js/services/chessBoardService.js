@@ -58,16 +58,21 @@ var Piece = function(piece, color, startPosition){
         return true;
     }
 
-	function move(board, to, callback){
-        var actions = findAllowedMove(board, this.position, to);
-        if(actions.length == 0) return false;
-        var allowedMove = _.find(actions, function(action){
-        	return isMoveAllowed(action, board, to);
-        })
-        if(!allowedMove) return false;
-        
-        if(allowedMove.onMove) allowedMove.onMove(board, to, piece);
-
+	function move(board, to, force, callback){
+		var allowedMove = {};
+		if(!force){
+	        var actions = findAllowedMove(board, this.position, to);
+	        if(actions.length == 0) return false;
+	        allowedMove = _.find(actions, function(action){
+	        	return isMoveAllowed(action, board, to);
+	        })
+	        if(!allowedMove) return false;
+	        
+	        if(allowedMove.onMove) allowedMove.onMove(board, to, piece);
+        }
+        else{
+        	allowedMove.firstTimeOnly = true;
+        }
         var move = {
             piece: piece,
             firstTimeOnly: allowedMove.firstTimeOnly,
@@ -211,14 +216,14 @@ var Board = function(){
         return true;
     }
 
-    function movePiece(piece, to){
+    function movePiece(piece, to, force){
         var oldPosition = {
             col: piece.position.col,
             row: piece.position.row
         };
     	
         var pieceAtCoords = findPieceByCoords(to);
-        return piece.move(this, to, function(move){
+        return piece.move(this, to, force, function(move){
         	if(pieceAtCoords){
     			pieceWasTaken(pieceAtCoords);
     		}
