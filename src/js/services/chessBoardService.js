@@ -54,8 +54,23 @@ var Piece = function(piece, color, startPosition){
     
         if(action.onlyIfAvailable && board.hasPieceAtCoords(to)) return false;
         if(action.onlyIfOccupied && !board.hasPieceAtCoords(to)) return false;
+
         if(action.firstTimeOnly && history.length > 0) return false;
         return true;
+    }
+
+    function findAllAllowedMoves(board){
+    	var allowedMoves = [];
+
+    	for(var col = 0; col < 8; col++){
+    		for(var row = 0; row < 8; row++){
+    			var moves = _.filter(findAllowedMove(board, this.position, { col: col, row: row}), function(move){ return isMoveAllowed(move, board,  { col: col, row: row}); });
+    			allowedMoves = allowedMoves.concat(moves);
+    		}
+    	}
+
+        return allowedMoves;
+        
     }
 
 	function move(board, to, force, callback){
@@ -95,6 +110,7 @@ var Piece = function(piece, color, startPosition){
 	return {
 		id: id,
 		move: move,
+		findAllAllowedMoves: findAllAllowedMoves,
 		color: options.color,
         position: position,
         history: history,
@@ -117,6 +133,7 @@ var Board = function(){
         hasPiecesInPath: hasPiecesInPath,
         movePiece: movePiece,
         takePieceAtCoords: takePieceAtCoords,
+        getAllPossibleMoves: getAllPossibleMoves,
         rows: rows,
         init: init,
         load: load,
@@ -214,6 +231,14 @@ var Board = function(){
     function hasPieceAtCoords(coords){
         if(!findPieceByCoords(coords)) return false;
         return true;
+    }
+
+    function canMovePiece(piece, to){
+    	return piece.canMovePiece(piece, to);
+    }
+
+    function getAllPossibleMoves(piece){
+    	return piece.findAllAllowedMoves(this);
     }
 
     function movePiece(piece, to, force){

@@ -9,11 +9,14 @@
 		$scope.selectedCell = null;
 
 		$scope.canMove = function(cell){
-            return false;
-
+            if(!cell.piece) return false;
 			if(!$scope.selectedCell) return false;
-			for (var i = $scope.selectedCell.piece.possibleMoves.length - 1; i >= 0; i--) {
-				var possibleMove = $scope.selectedCell.piece.possibleMoves[i];
+            console.log('can move', cell);
+
+			var possibleMoves= chessBoardService.board.getAllPossibleMoves(cell.piece);
+			for (var i = possibleMoves.length - 1; i >= 0; i--) {
+				var possibleMove = possibleMoves[i];
+
 				if(cell.col == possibleMove.col && cell.row == possibleMove.row) return true;
 
 			};
@@ -30,8 +33,9 @@
 					}*/
 				}
 				else
-				if(cell.piece)
+				if(cell.piece){
 					$scope.selectedCell = cell;
+				}
 				
 			}
 			else{
