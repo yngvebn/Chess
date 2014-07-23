@@ -4,7 +4,7 @@ var gutil = require('gulp-util');
 
 
 gulp.task('karma', function(){
-	gulp.src('./bodus').pipe(karma({configFile: 'karma.conf.js', action: 'watch'})).on('error', gutil.log);
+	gulp.src('./bodus').pipe(karma({configFile: 'karma.conf.js', action: 'watch'})).on('error', function() {});
 });
 
 gulp.task('default', ['karma'], function(){

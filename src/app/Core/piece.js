@@ -1,8 +1,11 @@
-angular.module('chessPieces').factory('Piece', function(){
+angular.module('chessPieces').provider('Piece', function(){
 	
 	var piece = {
 		name : ''
 	}
 
-	return piece;
+	this.$get = function(){
+		return piece;
+	}
+
 });
