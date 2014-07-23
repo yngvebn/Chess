@@ -1,2 +1,4 @@
-angular.module('chessPieces', []);
-angular.module('chess', ['chessPieces']);
+
+angular.module('common', []);
+angular.module('chessPieces', ['common']);
+angular.module('chess', ['chessPieces', 'common']);

@@ -13,13 +13,21 @@ describe('Chessboard', function(){
 	});
 
 	it('should be possible to place a piece', function(){
-		chessBoard.placePiece([1, 1], king);
+		chessBoard.placePiece([1, 1], new king());
 
-		expect(chessBoard.pieceAt([1, 1])).toBe(king);
+		expect(chessBoard.pieceAt([1, 1]).name).toBe('King');
+	});
+
+	it('should set the current position on the piece', function(){
+		var piece = new king();
+
+		chessBoard.placePiece([1, 1], piece);
+
+		expect(piece.position).toEqual([1, 1]);
 	})
 
 	it('should return the correct piece', inject(['Queen', function(queen){
-		chessBoard.placePiece([1, 1], king);
+		chessBoard.placePiece([1, 1], new king());
 
 		expect(chessBoard.pieceAt([1, 1])).not.toBe(queen);
 	}]))

@@ -3,7 +3,7 @@ describe('Bishop', function(){
 
 	var piece;
 	beforeEach(inject(['Bishop', function(_piece_){
-		piece = _piece_
+		piece = new _piece_()
 	}]))
 
 	it('should have its name set correctly',function(){

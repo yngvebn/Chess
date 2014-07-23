@@ -21,6 +21,8 @@ angular.module('chess').factory('ChessBoard', function(){
 
 	function placePiece(position, piece){
 		var x = position[0], y = position[1];
+
+		piece.position =position;
 		 service.tiles[x][y] = piece;
 	}
 
