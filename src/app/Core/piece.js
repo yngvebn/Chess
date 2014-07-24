@@ -1,25 +1,26 @@
 angular.module('chessPieces').factory('Piece', function(Guid){
 	
-	function piece(name){
-		
+	function piece(name, options){
+		var opts = {};
+
 		this.id = Guid();
 		this.name = name;
 		this.position = [0, 0]
 
-		
-	}
+		angular.extend(opts, options);
 
-	piece.prototype.position = function(pos){
-		return this.position(pos);
+		this.getMovesFrom = function(pos){
+			if(!opts.getMovesFrom) throw Error("Method not implemented");
+			return opts.getMovesFrom(pos);
+		}
 	}
 
 	piece.prototype.name = '';
 	piece.prototype.id = '';
-
 	
-	return function(name){
+	return function(name, options){
 			function construct(){
-				piece.call(this, name);
+				piece.call(this, name, options);
 			}
 
 			construct.prototype = Object.create(piece.prototype);

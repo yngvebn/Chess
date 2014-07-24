@@ -9,4 +9,8 @@ describe('Knight', function(){
 	it('should have its name set correctly',function(){
 		expect(piece.name).toBe('Knight');
 	});
+
+	it('should be possible to get moves from a coordinate', function(){
+		expect(piece.getMovesFrom).not.toThrow(new Error());
+	})
 });
