@@ -17,7 +17,7 @@ module.exports = function(config) {
     files: [
         '../src/vendor/angular.js',
         '../src/vendor/angular-mocks.js',
-        '../src/vendor/uuid.js',
+        '../src/vendor/lodash.js',
         '../src/app/app.js',
         '../src/app/**/*.js',
         '../src/spec/**/*.js'

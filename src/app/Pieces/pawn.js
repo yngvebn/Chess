@@ -1,3 +1,10 @@
 angular.module('chessPieces').factory('Pawn', function(Piece){
-	return Piece('Pawn');
+	function getMovesFrom(pos){
+		return [];
+	}
+
+
+	return Piece('Pawn', {
+		getMovesFrom : getMovesFrom
+	});
 });

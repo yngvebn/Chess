@@ -1,0 +1,1 @@
+angular.module('common').constant('boardSize', 8);
