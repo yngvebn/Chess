@@ -15,7 +15,7 @@ describe('MovesCalculator', function(){
 		function pathFunction(){
 			movesCalculator.getPath([0, 0], [2, 3])
 		}
-		expect(pathFunction).toThrow("Invalid path");
+		expect(movesCalculator.getPath([0, 0], [2, 3])).toEqual([]);
 	})
 
 	it('should not throw error on valid path', function(){

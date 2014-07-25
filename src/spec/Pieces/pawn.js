@@ -1,11 +1,12 @@
 describe('Pawn', function(){
 	beforeEach(angular.mock.module('chess'));
+	var pieceName = 'Pawn', piece, chessBoard, gameService;
 
-	var piece, chessBoard;
-	beforeEach(inject(['Pawn', 'ChessBoard', function(_piece_, _ChessBoard_){
+	beforeEach(inject([pieceName, 'ChessBoard', 'GameService', function(_piece_, _ChessBoard_, _GameService_){
 		piece = new _piece_();
 		chessBoard = _ChessBoard_;
-		chessBoard.placePiece([1, 1], piece);
+		gameService = _GameService_;
+
 	}]))
 
 	it('should have its name set correctly',function(){
@@ -29,10 +30,25 @@ describe('Pawn', function(){
 	})
 
 	it('should not return special move on first move', function(){
+				chessBoard.placePiece([1, 1], piece);
 		chessBoard.movePiece([1, 1], [1, 2])
 
 		var moves = piece.getMovesFrom([1, 2]);
 		moves.sort();
 		expect(moves).toEqual([[1,3]]);
+	})
+
+	it('should have correct startpositions', function(){
+		gameService.newGame({ whitePosition: 'top' });
+
+		for(var i = 0; i< 8; i++){
+			expect(chessBoard.pieceAt([i, 1]).name).toBe('Pawn');
+			expect(chessBoard.pieceAt([i, 1]).color).toBe('white');
+		}
+
+		for(var i = 0; i< 8; i++){
+			expect(chessBoard.pieceAt([i, 6]).name).toBe('Pawn');
+			expect(chessBoard.pieceAt([i, 6]).color).toBe('black');
+		}
 	})
 });

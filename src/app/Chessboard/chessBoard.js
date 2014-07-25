@@ -4,17 +4,30 @@ angular.module('chess').factory('ChessBoard', function(boardSize){
 		tiles: [],
 		placePiece: placePiece,
 		pieceAt: pieceAt,
-		movePiece: movePiece
+		movePiece: movePiece,
+		occupiedPositions: occupiedPositions
 	}
 	while(service.tiles.push([]) < boardSize);
 	return service;
-
 
 	function placePiece(position, piece){
 		var x = position[0], y = position[1];
 
 		piece.position =position;
 		service.tiles[x][y] = piece;
+	}
+
+	function occupiedPositions(colors){
+		var array = [];
+		for(var x = 0; x< service.tiles.length; x++){
+			var xtile = service.tiles[x];
+			for(var y = 0; y< xtile.length; y++){
+				if(xtile[y]){
+					array.push([x, y]);
+				}
+			}
+		}
+		return array;
 	}
 
 	function movePiece(fromPosition, toPosition){
@@ -28,7 +41,8 @@ angular.module('chess').factory('ChessBoard', function(boardSize){
 
 	function pieceAt(position){
 		var x = position[0], y = position[1];
-		return  service.tiles[x][y];
+		var piece =  service.tiles[x][y];
+		return piece || {};
 	}
 
 	

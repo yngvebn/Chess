@@ -19,45 +19,59 @@ angular.module('common').factory('MovesCalculator', function(boardSize){
 				pos[1] >= 0;
 	}
 
+
 	function getDistance(from, to){
 		var distance = [Math.abs(from[0]-to[0]), Math.abs(from[1]-to[1])];
 		distance.sort();
-		if(distance[0] % distance[1] !== 0){
-			throw Error("Invalid path");
+		
+		var path = getPath(from, to);
+		var segment = _.find(path, function(pathSegment){ return pathSegment[0] == to[0] && pathSegment[1] == to[1]; });
+		if(segment.length == 0){
+			throw new Error("Invalid path");
 		}
+		/*if((from[0] - to[0] != from[1] - to[1]) && (from[0] != to[0] || from[1] != to[1])){
+			
+		}*/
 		
 		return Math.max(distance[0],distance[1]);
+	}
+
+	function makeValid(pos){
+		return pos;
+		if(pos[0] < 0) pos[0] = 0;
+		if(pos[1] < 0) pos[1] = 0;
+		if(pos[0] >= boardSize) pos[0] = boardSize-1;
+		if(pos[1] >= boardSize) pos[1] = boardSize-1;
+		
 	}
 
 	function getPath(from, to){
 		var pathArray = [];
 		var edges = [];
-		edges.push(from);
-		edges.push(to);
-		edges.sort();
+		from = makeValid(from);
+		to = makeValid(to);
 
-		var distance = getDistance(from, to);
-
-		for(var i = 0; i<=distance; i++){
-			var pathSegment = [0,0];
-			if(edges[0][0] == edges[1][0]){
-				// lateral movement
-				pathSegment[0] = edges[0][0];
-			}
-			else{
-				pathSegment[0] = edges[0][0]+i;
-			}
-
-			if(edges[0][1] == edges[1][1]){
-				// vertical movement
-				pathSegment[1] = edges[0][1];
-			}
-			else{
-				pathSegment[1] = edges[0][1]+i;	
+		var xOperator = from[0] < to[0] ? 1 : from[0] > to[0] ? -1 : 0;
+		var yOperator = from[1] < to[1] ? 1 : from[1] > to[1] ? -1 : 0;
+		var index = 0;
+		pathSegment = from;
+		pathArray.push(pathSegment);
+		var toFound= false;
+		while(index < 8){
+			var pathSegment = [pathSegment[0]+xOperator, pathSegment[1]+yOperator];
+			
+			if(equals(pathSegment, makeValid(to))){
+				pathArray.push(pathSegment);
+				toFound = true;
+				break;
 			}
 			pathArray.push(pathSegment);
+
 		}
-		
+		if(!toFound){
+			console.log(from, to, pathArray);
+			throw new Error("Invalid path");
+		}
 		return pathArray;
 	}
 
@@ -83,6 +97,19 @@ angular.module('common').factory('MovesCalculator', function(boardSize){
 		var returnArray = [];
 		var maxXValue = boardSize;
 		var maxYValue = boardSize;
+		returnArray = _.chain(returnArray)
+						.union(getPath(pos, [pos[0]-distance, pos[1]]))
+						.union(getPath(pos, [pos[0]+distance, pos[1]]))
+						.union(getPath(pos, [pos[0], pos[1]-distance]))
+						.union(getPath(pos, [pos[0], pos[1]+distance]))
+						.union(getPath(pos, [pos[0]+distance, pos[1]+distance]))
+						.union(getPath(pos, [pos[0]-distance, pos[1]-distance]))
+						.union(getPath(pos, [pos[0]+distance, pos[1]-distance]))
+						.union(getPath(pos, [pos[0]-distance, pos[1]+distance]))
+						.without(pos)
+						.uniq(function(p){ return p[0]+'_'+p[1];}).value();
+
+/*
 		for(var x = 0-distance; x <= distance; x++)
 			for(var y = 0-distance; y <= distance; y++){
 				var newPos = [ pos[0] + x , pos[1] + y ];
@@ -90,7 +117,7 @@ angular.module('common').factory('MovesCalculator', function(boardSize){
 					returnArray.push(newPos);
 				}
 			}
-
+*/
 		return returnArray;
 	}
 })
