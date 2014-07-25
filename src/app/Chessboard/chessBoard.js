@@ -14,7 +14,7 @@ angular.module('chess').factory('ChessBoard', function(boardSize){
 		var x = position[0], y = position[1];
 
 		piece.position =position;
-		 service.tiles[x][y] = piece;
+		service.tiles[x][y] = piece;
 	}
 
 	function movePiece(fromPosition, toPosition){
@@ -23,7 +23,7 @@ angular.module('chess').factory('ChessBoard', function(boardSize){
 		if(_.isEmpty(pieceAtPosition)) throw Error("No piece at ["+fromPosition[0]+", "+fromPosition[1]+"]");
 
 		service.tiles[fromPosition[0]][fromPosition[1]] = undefined;
-		placePiece(toPosition, pieceAtPosition);
+		pieceAtPosition.move(toPosition);
 	}
 
 	function pieceAt(position){
