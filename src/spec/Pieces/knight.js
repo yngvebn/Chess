@@ -16,6 +16,24 @@ describe('Knight', function(){
 		expect(piece.getMovesFrom).not.toThrow(new Error());
 	})
 
+	it('should return correct moves from coordinate', function() {
+		var moves = piece.getMovesFrom([4, 4]);
+		
+		expect(moves).toContain([2, 3]);
+		expect(moves).toContain([2, 5]);
+		
+		expect(moves).toContain([3, 2]);		
+		expect(moves).toContain([3, 6]);
+		
+		expect(moves).toContain([5, 2]);
+		expect(moves).toContain([5, 6]);
+		
+		expect(moves).toContain([6, 3]);
+		expect(moves).toContain([6, 5]);
+		
+		
+		
+	})
 
 	it('should have correct startpositions', function(){
 		gameService.newGame({ whitePosition: 'top' });
